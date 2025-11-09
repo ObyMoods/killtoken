@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEATH KINGS STORE</title>
+  <style>
+    body { margin:0; font-family:Arial,sans-serif; background:#000; color:#fff; }
+    h1 { text-align:center; padding:20px; color:#0ff; text-shadow:0 0 10px #0ff,0 0 20px #00f; animation:glowText 2s infinite alternate; }
+    @keyframes glowText { from{ text-shadow:0 0 10px #0ff,0 0 20px #00f;} to{ text-shadow:0 0 20px #0ff,0 0 40px #00f;} }
+
+    /* tombol titik tiga */
+    .menu-btn { position:absolute; top:15px; left:15px; font-size:20px; cursor:pointer;
+      background:linear-gradient(135deg,#00f,#0ff); border:none; color:#fff; padding:8px 14px;
+      border-radius:10px; text-shadow:0 0 5px #000; box-shadow:0 0 15px rgba(0,255,255,.6); z-index:1200; }
+
+    /* sidebar */
+    .sidebar{height:100%;width:0;position:fixed;top:0;left:0;background:#111;overflow-x:hidden;
+      transition:.4s;padding-top:60px;z-index:1000;box-shadow:2px 0 15px rgba(0,140,255,.6);}
+    .sidebar .close-btn{position:absolute;top:15px;right:15px;background:linear-gradient(135deg,#00f,#0ff);
+      border:none;padding:6px 12px;border-radius:8px;color:#fff;font-size:16px;cursor:pointer;}
+    .sidebar a{padding:12px 20px;text-decoration:none;font-size:18px;color:#0ff;display:block;transition:.3s;}
+    .sidebar a:hover{background:#00f;color:#000;border-radius:8px;}
+
+    /* produk */
+    .produk-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:20px;}
+    .produk-card{position:relative;background:#0a0a0a;border:2px solid #00f;border-radius:16px;padding:20px;text-align:center;
+      box-shadow:0 0 25px rgba(0,255,255,.5);transition:.3s;}
+    .produk-card:hover{transform:scale(1.05);}
+    .produk-card h3{color:#0ff;}
+    .produk-card select{width:100%;padding:10px;border-radius:10px;margin:10px 0;border:1px solid #00f;background:#111;
+      color:#0ff;font-weight:bold;text-align:center;box-shadow:0 0 10px rgba(0,0,255,.5);}
+    .produk-card button{width:100%;background:linear-gradient(135deg,#00f,#0ff);border:none;padding:12px;border-radius:10px;
+      color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 0 15px rgba(0,255,255,.6);}
+
+    .badge{position:absolute;top:12px;right:12px;background:#0ff;color:#000;font-weight:bold;font-size:14px;border-radius:50%;
+      width:28px;height:28px;display:flex;justify-content:center;align-items:center;box-shadow:0 0 12px rgba(0,255,255,.8);}
+
+    /* popup */
+    .popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1100;
+      justify-content:center;align-items:center;}
+    .popup-content{background:#111;padding:20px;border-radius:20px;width:90%;max-width:420px;text-align:center;
+      box-shadow:0 0 25px rgba(0,140,255,.8);position:relative;max-height:90vh;overflow-y:auto;}
+    .popup .close-btn{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,#00f,#0ff);border:none;
+      padding:6px 12px;border-radius:8px;color:#fff;cursor:pointer;}
+
+    .remove-btn{display:inline-block;margin-top:6px;background:linear-gradient(135deg,#f00,#a00);border:none;color:white;
+      padding:8px 16px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:bold;box-shadow:0 0 12px rgba(255,0,0,.6);}
+    .remove-all-btn{width:100%;margin-top:10px;background:linear-gradient(135deg,#ff0044,#cc0033);border:none;color:#fff;
+      padding:12px;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 0 18px rgba(255,0,100,.6);}
+    .checkout-btn{width:100%;background:linear-gradient(135deg,#0f0,#0ff);border:none;padding:14px;border-radius:12px;
+      color:#000;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px;box-shadow:0 0 20px rgba(0,255,255,.7);}
+
+    .big-btn{width:100%;padding:14px;font-size:16px;font-weight:bold;border-radius:12px;border:none;color:#fff;
+      cursor:pointer;margin-top:10px;}
+    .wa-btn{background:linear-gradient(135deg,#0f0,#000);box-shadow:0 0 20px rgba(37,211,102,.6);}
+    .tg-btn{background:linear-gradient(135deg,#0088cc,#000);box-shadow:0 0 20px rgba(0,136,204,.6);}
+
+    /* metode bayar dropdown */
+    .pay-select{
+      width:100%;
+      padding:12px;
+      border-radius:100px;
+      background:#111;
+      color:#0ff;
+      border:1px solid #0ff;
+      font-size:20px;
+      font-weight:bold;
+      box-shadow:0 0 12px rgba(0,255,255,.6);
+      margin:20px 0;
+      text-align:center;}
+
+    .toast{
+      position:fixed;
+      top:-50px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,200,255,.85);
+      color:#fff;
+      padding:14px 22px;
+      border-radius:12px;
+      font-weight:bold;
+      box-shadow:0 0 12px rgba(0,200,255,.4);
+      opacity:0;transition:all 1s ease;
+      z-index:2000;}
+    .toast.show{
+    top:20px;
+    opacity:1;
+    }
+    .copy-btn{
+    background:#0ff;
+    border:none;
+    margin-left:8px;
+    padding:5px 8px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:12px;
+    color:#000;
+    font-weight:bold;
+      }
+    #paymentDetails img{
+    width:160px;
+    margin-top:10px;
+    border-radius:10px;
+    box-shadow:0 0 15px rgba(0,255,255,.6);
+    }
+    .produk-img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 10px 0;
+  box-shadow: 0 0 15px rgba(0,255,255,0.6);
+  transition: 0.3s;
+}
+
+.produk-card:hover .produk-img {
+  box-shadow: 0 0 25px rgba(0,255,255,1), 0 0 40px rgba(0,0,255,0.8);
+  transform: scale(1.02);
+}
+
+.produk-card {
+  background: rgba(0,0,0,0.7);
+  border: 2px solid #0ff;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 0 20px rgba(0,255,255,0.3);
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.produk-card h3 {
+  margin-bottom: 12px;
+}
+
+.produk-card select {
+  margin: 12px 0;
+}
+
+.produk-card button {
+  margin-top: 10px;
+}
+
+.produk-img {
+  margin: 10px 0 15px 0;
+}
+  </style>
+</head>
+<body>
+
+<button id="menuBtn" class="menu-btn" onclick="openNav()">☰</button>
+<h1 style="center">STORE DEATH KINGS</h1>
+
+<div id="mySidebar" class="sidebar">
+  <button class="close-btn" onclick="closeNav()">❌️</button>
+  <a href="#" onclick="closeNav(); showKeranjang()">📦 Keranjang (<span id="cartCount">0</span>)</a>
+  <a href="#" onclick="closeNav(); showPembayaran()">💳 Pembayaran</a>
+  <a href="#" onclick="closeNav(); showKontak()">📱 Kontak</a>
+  <a href="#" onclick="closeNav(); document.getElementById('popupAdminLogin').style.display='flex';">🔑 Admin Login</a>
+</div>
+
+<div class="produk-card">
+  <span class="badge" id="badge1">0</span>
+  <h3>SCRIPT TELEGRAM</h3>
+  <img src="https://files.catbox.moe/69vqzr.jpg" width="150px" alt="SCRIPT TELEGRAM" id="img2">
+  
+  <select id="varian1" onchange="gantiGambar('varian1','img2')">
+    <option value="SC OTAX - Rp25000" data-img="https://files.catbox.moe/69vqzr.jpg">SC OTAX - Rp25.000</option>
+    <option value="SC BLACK BULL - Rp20000" data-img="https://files.catbox.moe/i94n6n.jpg">SC BLACK BULL - Rp20.000</option>
+  </select>
+  
+  <button onclick="pilihProduk('SC TELEGRAM','varian1','badge1')">Tambah ke Keranjang</button>
+</div>
+
+<div class="produk-card">
+  <span class="badge" id="badge2">0</span>
+  <h3>PTERODACTYL</h3>
+  <img src="https://files.catbox.moe/1u02rp.jpg" width="150px" alt="PTERODACTYL">
+  <select id="varian2">
+    <option value="RAM 1GB - Rp1000">RAM 1GB - R1.000</option>
+    <option value="RAM 2GB - Rp2000">RAM 2GB - Rp2.000</option>
+    <option value="RAM 3GB - Rp3000">RAM 3GB - Rp4.000</option>
+    <option value="RAM 4GB - Rp4000">RAM 4GB - Rp4.000</option>
+    <option value="RAM 5GB - Rp5000">RAM 5GB - Rp5.000</option>
+    <option value="RAM 6GB - Rp6000">RAM 6GB - Rp6.000</option>
+    <option value="RAM 7GB - Rp7000">RAM 7GB - Rp7.000</option>
+    <option value="RAM 8GB - Rp8000">RAM 8GB - Rp8.000</option>
+    <option value="RAM 9GB - Rp9000">RAM 9GB - Rp9.000</option>
+    <option value="RAM 10GB - Rp10000">RAM 10GB - Rp10.000</option>
+    <option value="RAM UNLIMITED - Rp5000">RAM UNLIMITED - Rp5.000</option>
+    <option value="RESELLER PANEL PRIVAT - Rp20000">RESELLER PANEL PRIVAT - Rp20.000</option>
+  </select>
+  <button onclick="pilihProduk('PTERODACTYL','varian2','badge2')">Tambah ke Keranjang</button>
+</div>
+
+<div class="produk-card">
+  <span class="badge" id="badge3">0</span>
+  <h3>NOKOS WA</h3>
+  <select id="varian3">
+    <option value="NO FRESH INDONESIA - Rp5000">NO FRESH INDO - Rp5.000</option>
+    <option value="NO FRESH PHILIPINA - Rp6000">NO FRESH PHILIP - Rp6.000</option>
+    <option value="NO SAVE INDONESIA - Rp7000">NO SAVE INDO - Rp7.000</option>
+    <option value="NO SAVE PHILIPINA - Rp8000">NO SAVE PHILIP - Rp8.000</option>
+  </select>
+  <button onclick="pilihProduk('Panel Bot','varian3','badge3')">Tambah ke Keranjang</button>
+</div>
+
+<div class="popup" id="popupCart">
+  <div class="popup-content">
+    <button class="close-btn" onclick="closePopup('popupCart')">❌</button>
+    <h2>🛒 Keranjang</h2>
+    <ul id="cartItems"></ul>
+    <p><b>Total: Rp <span id="cartTotal">0</span></b></p>
+    <button class="remove-all-btn" onclick="hapusSemua()">🗑️ Hapus Semua</button>
+    <button class="checkout-btn" onclick="checkout()">✅ Checkout</button>
+  </div>
+</div>
+
+<div class="popup" id="popupBayar">
+  <div class="popup-content">
+    <button class="close-btn" onclick="closePopup('popupBayar')">❌</button>
+    <h2>💳 Pembayaran</h2>
+    <p>Total belanja: Rp <span id="payTotal">0</span></p>
+    <select class="pay-select" onchange="showPaymentDetails(this.value)">
+      <option value="">-- Pilih Metode --</option>
+      <option value="Dana"> Dana</option>
+    </select>
+    <div id="paymentDetails"></div>
+    <p style="margin-top:10px;font-size:14px;color:#0ff;">
+      <h3>Jika sudah transfer, silahkan kirim bukti ke contact di bawah ini:</h3>
+    </p>
+    <h3>Data Pembeli:</h3>
+<input type="text" id="buyerName" placeholder="Nama Anda" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #0ff;">
+<input type="file" id="buyerProof" accept="image/*" style="margin:8px 0;">
+<button class="checkout-btn" onclick="submitOrder()">📤 Kirim Pesanan</button>
+  </div>
+</div>
+
+<div class="popup" id="popupKontak">
+  <div class="popup-content">
+    <button class="close-btn" onclick="closePopup('popupKontak')">❌</button>
+    <h2>📞 Kontak Kami</h2>
+    <button class="big-btn wa-btn" onclick="window.open('https://wa.me/6288226803104','_blank')">📲 WhatsApp</button>
+    <button class="big-btn tg-btn" onclick="window.open('https://t.me/Death_co','_blank')">📩 Telegram</button>
+  </div>
+</div>
+
+<div class="popup" id="popupAdminLogin">
+  <div class="popup-content">
+    <button class="close-btn" onclick="closePopup('popupAdminLogin')">❌</button>
+    <h2>🔑 Admin Login</h2>
+    <input type="text" id="adminUser" placeholder="Username" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #0ff;">
+    <div style="position:relative;">
+      <input type="password" id="adminPass" placeholder="Password" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #0ff;">
+      <button onclick="togglePassword()" style="position:absolute;right:1px;top:12px;padding:6px 8px;border:none;border-radius:8px;background:#0ff;color:#000;font-size:15px;cursor:pointer;">👁️</button>
+    </div>
+    <button class="checkout-btn" onclick="loginAdmin()">Login</button>
+  </div>
+</div>
+
+<div class="popup" id="popupAdmin">
+  <div class="popup-content">
+    <button class="close-btn" onclick="closePopup('popupAdmin')">❌</button>
+    <h2>Admin</h2>
+    <ul id="adminOrders"></ul>
+  </div>
+</div>
+
+<div class="popup" id="popupAdmin">
+  <div class="popup-content" style="max-width:600px;">
+    <button class="close-btn" onclick="closePopup('popupAdmin')">❌</button>
+    <h2>Checkout Masuk</h2>
+    <ul id="adminOrders" style="list-style:none;padding:0;"></ul>
+  </div>
+</div>
+
+<script>
+let cart=[];
+
+function openNav(){document.getElementById("mySidebar").style.width="250px";document.getElementById("menuBtn").style.display="none";}
+function closeNav(){document.getElementById("mySidebar").style.width="0";document.getElementById("menuBtn").style.display="block";}
+
+function pilihProduk(nama,selectId,badgeId){
+  const varian=document.getElementById(selectId).value;
+  let harga=parseInt(varian.split("Rp")[1]);
+  cart.push({nama:`${nama} - ${varian.split(" - ")[0]}`,harga:harga,badge:badgeId});
+  updateCart();
+  let badge=document.getElementById(badgeId);
+  badge.innerText=parseInt(badge.innerText)+1;
+  showToast(`${nama} berhasil ditambahkan ke keranjang!`);
+}
+
+function updateCart(){
+  let cartDiv=document.getElementById("cartItems"); let total=0;
+  cartDiv.innerHTML="";
+  cart.forEach((item,i)=>{
+    cartDiv.innerHTML+=`<li style="margin:10px 0;">${item.nama} - Rp${item.harga.toLocaleString()}<br>
+      <button class="remove-btn" onclick="hapusItem(${i})">❌ Hapus Item Ini</button></li>`;
+    total+=item.harga;
+  });
+  document.getElementById("cartTotal").innerText=total.toLocaleString();
+  document.getElementById("cartCount").innerText=cart.length;
+  document.getElementById("payTotal").innerText=total.toLocaleString();
+}
+
+function hapusItem(i){
+  let badge=document.getElementById(cart[i].badge);
+  badge.innerText=parseInt(badge.innerText)-1;
+  cart.splice(i,1);
+  updateCart();
+  showToast("Item berhasil dihapus ❌");
+}
+function hapusSemua(){
+  cart.forEach(item=>{let badge=document.getElementById(item.badge);badge.innerText="0";});
+  cart=[];updateCart();showToast("Semua item berhasil dihapus 🗑️");
+}
+
+function showKeranjang(){document.getElementById("popupCart").style.display="flex";}
+function showPembayaran(){document.getElementById("popupBayar").style.display="flex";}
+function showKontak(){document.getElementById("popupKontak").style.display="flex";}
+function closePopup(id){document.getElementById(id).style.display="none";}
+
+function checkout(){
+  if(cart.length===0){showToast("Keranjang kosong ❌");return;}
+  closePopup('popupCart');showPembayaran();
+}
+
+function showPaymentDetails(metode){
+  const details=document.getElementById("paymentDetails");
+  details.style.display="block";
+  if(metode==="Dana"){
+    details.innerHTML=`<p>No Dana: <b id="copyDana">088220252154</b>
+      <button class="copy-btn" onclick="copyText('copyDana')">Salin</button></p>
+      <img src="https://files.catbox.moe/va0z82.jpg" alt="QR Dana">`;
+  } else {details.style.display="none";}
+}
+
+function copyText(id){
+  let text=document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text);
+  showToast("Nomor berhasil disalin 📋");
+}
+
+function showToast(msg){
+  const toast=document.createElement("div");
+  toast.className="toast show";
+  toast.innerHTML=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>{toast.classList.remove("show");},3000);
+  setTimeout(()=>{toast.remove();},4000);
+}
+
+function gantiGambar(selectId, imgId) {
+  const select = document.getElementById(selectId);
+  const img = document.getElementById(imgId);
+  const selectedOption = select.options[select.selectedIndex];
+  const newImg = selectedOption.getAttribute("data-img");
+  img.src = newImg;
+}
+const adminData = {user:"admin", pass:"12345"};
+let orders = [];
+
+function togglePassword(){
+  const input=document.getElementById("adminPass");
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+function loginAdmin(){
+  const user=document.getElementById("adminUser").value;
+  const pass=document.getElementById("adminPass").value;
+  if(user===adminData.user && pass===adminData.pass){
+    closePopup('popupAdminLogin');
+    showAdmin();
+    showToast("Login berhasil ✅");
+  }else{
+    showToast("Login gagal ❌");
+  }
+}
+
+function showAdmin(){
+  document.getElementById("popupAdmin").style.display="flex";
+  updateAdminOrders();
+}
+
+function submitOrder(){
+  const name=document.getElementById("buyerName").value;
+  const proof=document.getElementById("buyerProof").files[0];
+  const method=document.querySelector(".pay-select").value;
+  const total=document.getElementById("payTotal").innerText;
+
+  if(!name || !proof || !method){
+    showToast("Lengkapi data checkout ❌"); return;
+  }
+
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const order={
+      id:"ORD"+Date.now(),
+      name:name,
+      method:method,
+      total:total,
+      time:new Date().toLocaleString(),
+      proof:e.target.result
+    };
+    let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+    orders.push(order);
+    localStorage.setItem("orders",JSON.stringify(orders));
+    showToast("Pesanan terkirim ✅");
+    hapusSemua();
+    closePopup("popupBayar");
+  };
+  reader.readAsDataURL(proof);
+}
+
+function updateAdminOrders(){
+  const list=document.getElementById("adminOrders");
+  list.innerHTML="";
+  orders.forEach((o,i)=>{
+    list.innerHTML+=`
+      <li style="margin:12px 0;border:1px solid #0ff;padding:10px;border-radius:10px;">
+        <b>${o.name}</b> - Rp${o.total} <br>
+        Metode: ${o.method}<br>
+        <img src="${o.proof}" width="120" style="margin-top:8px;border-radius:8px;"><br>
+      </li>`;
+  });
+}
+
+// dipanggil saat user checkout + submit bukti
+function submitOrder(){
+  const name=document.getElementById("buyerName").value;
+  const proof=document.getElementById("buyerProof").files[0];
+  const method=document.querySelector(".pay-select").value;
+  const total=document.getElementById("payTotal").innerText;
+
+  if(!name || !proof || !method){showToast("Lengkapi data checkout ❌");return;}
+
+  const order={
+    name:name,
+    method:method,
+    total:total,
+    time:new Date().toLocaleString(),
+    proof:URL.createObjectURL(proof)
+  };
+
+  orders.push(order);
+  showToast("Pesanan terkirim ✅");
+  closePopup('popupBayar');
+}
+
+// tampilkan admin panel
+function showAdmin(){
+  document.getElementById("popupAdmin").style.display="flex";
+  updateAdminOrders();
+}
+
+// update daftar pesanan
+function updateAdminOrders(){
+  const list=document.getElementById("adminOrders");
+  list.innerHTML="";
+  if(orders.length===0){
+    list.innerHTML="<p style='color:#0ff;'>Belum ada checkout ❌</p>";
+    return;
+  }
+  orders.forEach((o,i)=>{
+    list.innerHTML+=`
+      <li style="margin:12px 0;padding:12px;border:1px solid #0ff;border-radius:12px;box-shadow:0 0 12px rgba(0,255,255,.5);">
+        <b>👤 ${o.name}</b><br>
+        💰 Total: Rp${o.total}<br>
+        💳 Metode: ${o.method}<br>
+        🕒 Waktu: ${o.time}<br>
+        📷 Bukti:<br><img src="${o.proof}" width="200" style="margin-top:6px;border-radius:8px;"><br>
+        <button class="remove-btn" onclick="hapusOrder(${i})">🗑️ Hapus</button>
+      </li>
+    `;
+  });
+}
+
+// hapus order
+function hapusOrder(i){
+  orders.splice(i,1);
+  updateAdminOrders();
+  showToast("Checkout dihapus ❌");
+}
+</script>
+</body>
+</html>
